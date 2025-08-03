@@ -1,0 +1,46 @@
+# Workflow naam
+name: Build and Deploy Hugo site
+
+# Triggers: voer deze workflow uit bij elke push naar de 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+# Een enkele job genaamd 'build-and-deploy'
+jobs:
+  build-and-deploy:
+    # De virtuele machine waarop de job draait
+    runs-on: ubuntu-latest
+
+    # *** TOEGEVOEGDE SECTIE ***
+    # Rechten instellen voor de GITHUB_TOKEN om schrijven naar branches toe te staan
+    permissions:
+      contents: write
+
+    # Stappen die uitgevoerd worden
+    steps:
+      # Stap 1: Code uitchecken uit de 'main' branch
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      # Stap 2: Hugo installeren
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+
+      # Stap 3: De Hugo site bouwen
+      - name: Build
+        run: hugo --minify
+
+      # Stap 4: De gegenereerde 'public' map deployen naar de 'gh-pages' branch
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          # De branch naam waar de statische site naartoe wordt gepusht
+          publish_branch: gh-pages
