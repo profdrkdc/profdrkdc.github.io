@@ -1,3 +1,8 @@
 baseURL = "https://profdrkdc.github.io/"
 languageCode = "nl-be"
 title = "Minimale Hugo Test"
+
+# Expliciet definiëren welke output formaten we willen voor de homepage.
+# Dit forceert de generatie van index.html.
+[outputs]
+  home = ["HTML", "RSS"]
